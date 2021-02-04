@@ -1,0 +1,22 @@
+<mat-card class="content-align" *ngIf="test">
+      <mat-card-header class="header-mat-card">
+      <mat-card-title>
+          <h4>Single Document View</h4>
+      </mat-card-title>
+      <mat-card-subtitle class="title-color">test-create-edit</mat-card-subtitle>
+    </mat-card-header>
+    <div class="field-spacing"></div>
+    <mat-divider ></mat-divider>
+    <mat-card-content class="fields-content">
+    <div><mat-form-field class="example-container">
+          <input matInput placeholder="invoice" value="{{test.invoice}}" [(ngModel)]="test.invoice" #EIDcLhXg class="input-font-size">
+        </mat-form-field>
+       </div></mat-card-content>
+      <mat-divider></mat-divider>
+      <div class="field-spacing"></div>
+        <mat-card-actions class="footer-mat-card-actions" >
+            <button mat-raised-button color="primary" (click)="submit()" class="footer-button">Submit</button>
+
+        </mat-card-actions>
+      </mat-card>
+      

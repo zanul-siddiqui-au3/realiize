@@ -1,0 +1,32 @@
+<div class="container">
+  <p>Click to start recording video</p>
+  <div class="action-btn mb-5">
+    <button
+      mat-raised-button
+      color="primary"
+      class="mr-5"
+      (click)="handleStartRecording()"
+      [disabled]="recordOption.isStart"
+    >
+      Start
+    </button>
+    <button
+      mat-stroked-button
+      color="accent"
+      class="mr-5"
+      (click)="handleStopRecording()"
+      [disabled]="!recordOption.isStart"
+    >
+      Stop
+    </button>
+    <a target="_blank" #downloadLink>Download Link</a>
+  </div>
+  <div class="video-container" #videoContainer>
+    <video controls autoplay playsinline style="width: 40%" #videoRef></video>
+  </div>
+  <mat-spinner *ngIf="isLoading" class="m-auto"></mat-spinner>
+  <pre *ngFor="let item of videoTranscript | keyvalue: originalOrder">
+    {{ fancyTimeFormat(item.key) }} : {{ item.value }}
+</pre
+  >
+</div>

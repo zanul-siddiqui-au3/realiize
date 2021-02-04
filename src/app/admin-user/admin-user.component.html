@@ -1,0 +1,61 @@
+<div class="container">
+    <h3 class="text-primary" >Admin Users Dashboard</h3>
+    <hr/>
+    <div class="search mb-5">
+      <input
+        id="typeahead-basic"
+        type="text"
+        class="form-control mt-5"
+        [(ngModel)]="searchValue"
+        placeholder="Type to Search"
+        (keyup)="handleKeyPress()"
+      />
+    </div>
+    <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort class="w-100">
+     
+      <ng-container matColumnDef="First Name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> First Name </th>
+        <td mat-cell *matCellDef="let row" class="text-left" > {{row.name?.first}} </td>
+      </ng-container>
+  
+     
+      <ng-container matColumnDef="Last Name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </th>
+        <td mat-cell *matCellDef="let row" class="text-left"> {{row.name?.last}}</td>
+      </ng-container>
+  
+    
+      <ng-container matColumnDef="Email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+        <td mat-cell *matCellDef="let row" class="text-left"> {{row?.email}} </td>
+      </ng-container>
+  
+    
+      <ng-container matColumnDef="Is Subscriber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Is Subscriber </th>
+        <td mat-cell *matCellDef="let row" class="text-left" [ngClass]="{  'text-success' : (row.isPaidUser && !row.subscriptionCancellationRequested) ,  'text-danger' : ( !row.isPaidUser || row.subscriptionCancellationRequested)}"  > {{row.isPaidUser && !row.subscriptionCancellationRequested  ? 'true' : 'false' }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="Actions">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
+        <td mat-cell *matCellDef="let row" class="text-left">  
+          <button mat-stroked-button color="primary" [routerLink]="[row?._id]" >View</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <div class="mt-5 pagination float-right">
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="limit"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      [pageIndex]="page - 1"
+      (page)="onPageEvent($event)"
+    >
+    </mat-paginator>
+  </div>
+</div>

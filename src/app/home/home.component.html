@@ -1,0 +1,6 @@
+<img src="{{ user?user.photoUrl:'' }}">
+<div>
+  <h4>{{ user?user.name:'' }}</h4>
+  <p>{{ user?user.email:'' }}</p>
+</div>
+<button mat-raised-button color="accent" (click)="signOut()">Signout</button>

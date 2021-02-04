@@ -1,0 +1,22 @@
+.imagebg{
+    background-image:url("https://restaurants.accorhotels.com/media/images/istock-479977238-abe-hp-7a42_1400x420.jpg");
+    background-size: cover;
+    height: 500px;
+    margin-bottom:5%;
+}
+.head{
+    color:#fff !important;
+    position: absolute;
+    top: 30%;
+    left:0;
+    right:0;
+    text-align: center;
+    font-size:40px;
+}
+.faqpage{
+    width:70%;
+    margin: 0 auto !important;
+    border-top: 4px solid #e784c3;
+    padding: 0 !important;
+    text-align: left;
+}

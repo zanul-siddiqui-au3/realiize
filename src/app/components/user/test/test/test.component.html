@@ -1,0 +1,78 @@
+
+    <div class="search">
+      <input
+      id="typeahead-basic"
+      type="text"
+      class="form-control mt-5"
+      [(ngModel)]="searchValue"
+      placeholder="Type to Search"
+      (keyup)="handleKeyPress()"
+      />
+    </div>
+    <div (click)="clickDrop($event)">
+    <div class="clearfix"><button mat-button class="float-right" id="filter-button" (click)='toggleFilter()'>
+        <i class="material-icons">
+            filter_list
+        </i>
+    </button></div>
+    <div class="rel-container">
+ <div [ngClass]="filterVisibility ? 'filterbar' : ''" class="card filter-card float-right">
+    <article class="card-group-item">
+        <header class="card-header">
+            <h6 class="title">Filter </h6>
+        </header>
+        <div class="filter-content">
+            <div class="card-body">
+                <form>
+                        <mat-form-field class="filter" floatLabel="never">
+                        <mat-label>invoice</mat-label>
+                        <input matInput [formControl]="invoiceFilter">
+                        </mat-form-field>
+                        
+    </form>
+              </div>
+          </div>
+      </article>
+  </div>
+     <div [ngClass]="editVisibility ? 'editBar' : ''" class="card edit-card float-left">
+    <article class="card-group-item">
+        <header class="card-header">
+            <h6 class="title">Edit </h6>
+        </header>
+        <div class="edit-content">
+            <div class="card-body">
+                <form>
+                        <mat-form-field  >
+                        <mat-label>invoice</mat-label>
+                        <input matInput  [(ngModel)]="editBar.invoice" name='invoice' >
+                        </mat-form-field>
+                        
+    <button mat-raised-button color="primary" (click)="saveBar()">Save</button>
+
+    </form>
+              </div>
+          </div>
+      </article>
+  </div>
+    
+    <div class="mat-elevation-z8">
+    <mat-table #table [dataSource]="dataSource">
+    
+    <div>
+      <ng-container matColumnDef=invoice>
+        <mat-header-cell *matHeaderCellDef>invoice</mat-header-cell>
+        <mat-cell *matCellDef="let element"> <a routerLink="{{element._id}}">{{element.invoice}}</a> </mat-cell>
+      </ng-container>
+    </div>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openEditBar(row)"></mat-row>
+        </mat-table>
+        <mat-paginator
+        [length]="length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="page - 1"
+        (page)="onPageEvent($event)"
+      >
+      </mat-paginator>
+    </div></div></div>

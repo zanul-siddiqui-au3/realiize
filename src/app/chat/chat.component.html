@@ -1,0 +1,27 @@
+<div>
+  <div layout="row">
+    <div>Conversation</div>
+    <div (click)="selectConversation($event, conversation)" mat-list-item *ngFor="let conversation of conversations">
+      <div>
+        <span mat-list-item *ngFor="let user of conversation.users"> {{ user.name.first }}, </span>
+      </div>
+    </div>
+  </div>
+  <div layout="column">
+    <mat-card>
+      <mat-list>
+        <mat-list-item *ngFor="let message of messages" [ngClass]="[(message.action === undefined)? 'chat-list-item': '']">
+          <span>{{message.content}} </span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </div>
+  <div class="chat-footer-container">
+    <a>{{to?.email}}</a>
+    <mat-icon>message</mat-icon>
+    <mat-form-field class="example-full-width">
+      <input matInput #inputMessage maxlength="500" placeholder="Type your message" [(ngModel)]="messageContent" (keyup.enter)="sendMessage(messageContent)">
+      <mat-hint align="end">{{inputMessage.value.length}}/500</mat-hint>
+    </mat-form-field>
+  </div>
+</div>

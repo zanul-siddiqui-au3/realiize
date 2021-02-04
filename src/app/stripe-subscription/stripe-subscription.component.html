@@ -1,0 +1,156 @@
+<h1 class="text-primary mt-2" >Subscription Payment</h1>
+<div class="profileContainer" *ngIf="userData">
+	<div class="profile-form-container">
+		<div class="tab-container" *ngIf="!isMobileView">
+			<div class="left-container">
+				<ul>
+					<li [ngClass]="activeTab === 'payment' ? 'active' : ''" (click)="activateTab('payment')">Payments
+					</li>
+					<li [ngClass]="activeTab === 'subscription' ? 'active' : ''" (click)="activateTab('subscription')">
+						Subscriptions</li>
+				</ul>
+			</div>
+			<div class="right-container">
+				<div class="paymentsForm" *ngIf="activeTab === 'payment'">
+					<div class="heading">Your saved Debit/Credit Cards</div>
+					<ng-template [ngIf]="isLoading" >
+					</ng-template>
+					<ng-template [ngIf]="userCardDetail && !isCardReplace" >
+					  <table class="paymentTable" >
+						<tr>
+							<td>{{userCardDetail.brand}}</td>
+							<td>
+								{{userCardDetail.funding}} Card ending with {{userCardDetail.last4}}
+							</td>
+							<td><button class="edit-btn" (click)="handleCardReplace()">Replace</button></td>
+						</tr>
+					  </table>
+					</ng-template>
+					<ng-template [ngIf]="isLoading" >
+						<div class="spinnner">
+							<mat-spinner></mat-spinner>
+						</div>
+					</ng-template>
+					<ng-template [ngIf]="isCardReplace" >
+						<app-payment *ngIf="isCardReplace" [isCardEdit]="true" (cancelCardReplace)="cancelCardReplace()" (isLoading)="isLoading"  (successReplace)="successEdit($event)"></app-payment>
+					</ng-template>
+					<ng-template [ngIf]="!userCardDetail"  >
+					<div class="noSavedCard">No Saved Cards</div>
+					</ng-template>
+					<div class="heading mt-5">Your Payment History</div>
+					<table *ngIf="dataSource.length > 0">
+						<tr *ngFor="let data of dataSource">
+							<td>{{data.createdAt | date :"MM/dd"}}</td>
+							<td>
+								<span>{{data.type}}</span>
+								<span>FROM: {{data.cardDetails?.brand}}  ending with
+									{{data.cardDetails?.last4}}</span>
+							</td>
+							<td>{{(data.amount/100).toFixed(0)}} GBP</td>
+						</tr>
+					</table>
+					<div class="noHistory" *ngIf="dataSource.length === 0">No Payment History</div>
+				</div>
+				<div class="subscriptionForm" *ngIf="activeTab === 'subscription'">
+					<div class="heading">Your Subscriptions</div>
+					<app-payment *ngIf="!userData.isPaidUser; else premium" (successSub)="successSubscription($event)" (isLoading)="isLoading" >
+					</app-payment>
+					<ng-template #premium>
+						<ng-template [ngIf]="!userData.subscriptionCancellationRequested && !isLoading" >
+						<div class="subscribedUser">
+							<div class="title">
+								<span>You have subscribed to  products</span>
+								<button
+									*ngIf="!userData.subscriptionCancellationRequested"
+									(click)="openCancelModal()">Cancel</button>
+							</div>
+							<div class="startedFrom">Started From: {{subscriptionStart}}</div>
+							<div class="notice">*Your subscription will be auto-renewed on {{subscriptionEnd}}.
+							</div>
+						</div>
+						</ng-template>
+						<ng-template [ngIf]="userData.subscriptionCancellationRequested" >
+						<div class="subscribedUser">
+							<div class="title">
+								<span>You have Unsubscribed to  product</span>
+							</div>
+						</div>
+						</ng-template>
+						<ng-template [ngIf]="isLoading" >
+						<div class="spinnner">
+							<mat-spinner></mat-spinner>
+						</div>
+						</ng-template>
+					</ng-template>
+				</div>
+			</div>
+		</div>
+
+		<div class="accordion-container" *ngIf="isMobileView">
+			<div class="right-container">
+				<mat-accordion>
+					<mat-expansion-panel>
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								Payment
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						
+						<div class="paymentsForm">
+							<div class="heading">Your Payments History</div>
+							<table *ngIf="dataSource.length > 0">
+								<tr *ngFor="let data of dataSource">
+									<td>{{data.createdAt | date :"MM/dd"}}</td>
+									<td>
+										<span>{{data.type}}</span>
+										<span>FROM: {{data.cardDetails?.brand}} ending with
+											{{data.cardDetails?.last4}}</span>
+									</td>
+									<td>{{(data.amount/100).toFixed(0)}} GBP</td>
+								</tr>
+							</table>
+							<div class="noHistory" *ngIf="dataSource.length === 0">No Payment History</div>
+						</div>
+					</mat-expansion-panel>
+
+					<mat-expansion-panel>
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								Subscriptions
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						<div class="subscriptionForm">
+							<div class="heading">Your Subscriptions</div>
+							<app-payment *ngIf="!userData.isPaidUser; else premium"
+								(successSub)="successSubscription($event)"></app-payment>
+							<ng-template #premium>
+								<ng-template [ngIf]="!userData.subscriptionCancellationRequested  && !isLoading " >
+								<div class="subscribedUser">
+									<div class="title">
+										<span>You have subscribed to  products</span>
+										<button
+											*ngIf="userData.isPaidUser && !userData.subscriptionCancellationRequested"
+											(click)="openCancelModal()">Cancel</button>
+									</div>
+									<div class="startedFrom">Started From: {{subscriptionStart}}</div>
+									<div class="notice">*Your subscription will be auto-renewed on {{subscriptionEnd}}.
+									</div>
+								</div>
+								</ng-template>
+								<ng-template [ngIf]="userData.subscriptionCancellationRequested  && !isLoading " >
+								<div class="subscribedUser">
+									<div class="title">
+										<span>You have Unsubscribed to  products</span>
+									</div>
+								</div>
+								</ng-template>
+								<ng-template [ngIf]="isLoading" >
+								</ng-template>
+							</ng-template>
+						</div>
+					</mat-expansion-panel>
+				</mat-accordion>
+			</div>
+		</div>
+	</div>
+</div>

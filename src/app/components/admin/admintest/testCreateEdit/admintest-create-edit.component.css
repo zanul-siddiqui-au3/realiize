@@ -1,0 +1,66 @@
+
+            test-create-edit {
+
+            };
+            .headerfontcolor{
+                color: whitesmoke;
+            }
+            .example-container {
+                width: 40%;
+            }
+
+            .content-align{
+                top: 20px;
+                bottom:20px;
+                padding-top: 10px;
+                align-content: left;
+                margin: auto;
+                width: 95%;
+                text-align:left !important;
+                background-color: #e7f2fe;
+            }
+
+            .expansion-panel-header-object-color{
+                background-color: #69a1fc;
+            }
+            .title-color{
+                color: white;
+            }
+
+            h5,h4{
+                color: white;
+            }
+
+            .content-array-bg{
+                background-color:#9cc1fc;
+                width:100%;
+                padding-bottom: 10px;
+                padding-top: 10px;
+                padding-left: 5px
+            }
+            .header-mat-card{
+                background-color: #3983fa;
+                padding: 5px;
+            }
+            .footer-mat-card-actions{
+                text-align: right !important;
+                background-color: #9cc1fc;
+                padding: 0px;
+            }
+            .array-mat-card{
+                background-color: #e6effe;
+                margin-bottom: 8px;
+            }
+            .field-spacing{
+                padding: 10px;
+            }
+            .input-font-size{
+                font-size:16px;
+            }
+            .footer-button-size{
+                size: 60px;
+            }
+            .fields-content{
+                margin: 10px;
+            }
+            

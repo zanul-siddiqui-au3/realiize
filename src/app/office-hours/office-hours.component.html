@@ -1,0 +1,32 @@
+<div class="container">
+  <div *ngFor="let dayOfTheWeek of objectKeys(officeHours)">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{dayOfTheWeek}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <table class="table table-hover" id="myTable">
+          <thead>
+            <tr>
+              <th>Starting Time</th>
+              <th>Closing Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let officeHour of officeHours[dayOfTheWeek]">
+              <td>
+                <input atp-time-picker [ngModel]="officeHour.start | minutesToHour" (ngModelChange)="officeHour.start = calculateMinutes($event)"/>
+              </td>
+              <td>
+                <input atp-time-picker [ngModel]="officeHour.end | minutesToHour" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <mat-action-row>
+            <button mat-button color="primary" (click)="addRow(dayOfTheWeek)">Add Row</button>
+        </mat-action-row>      
+    </mat-expansion-panel>
+  </div>
+</div>

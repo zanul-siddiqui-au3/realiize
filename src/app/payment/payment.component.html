@@ -1,0 +1,23 @@
+<div *ngIf="isCardEdit ; else subscriptionForm" >
+  <div class="paymentdiv">
+    <form #checkout="ngForm" class="checkout paymentmethod">
+      <div class="stripeInput">
+          <div id="card-info" #cardInfo></div>
+          <div id="card-errors" role="alert" *ngIf="error">{{ error }}</div>
+      </div>
+  </form>
+  <button (click)="handleCancelCard()">Cancel</button>
+  <button (click)="handleReplaceCard()">Save</button>
+  </div> 
+</div>
+<ng-template #subscriptionForm >
+<div class="paymentdiv">
+  <form #checkout="ngForm" class="checkout paymentmethod">
+    <div class="stripeInput">
+        <div id="card-info" #cardInfo></div>
+        <div id="card-errors" role="alert" *ngIf="error">{{ error }}</div>
+    </div>
+</form>
+<button (click)="onSubmit()">Subscribe</button>
+</div> 
+</ng-template>

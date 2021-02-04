@@ -1,0 +1,35 @@
+<div class="PaymentTabContainer">
+    <mat-accordion>
+        <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" *ngIf="isSavedCardAvailable" hideToggle="true">
+            <mat-expansion-panel-header class="materialHeader">
+                <mat-panel-title>
+                    Manage Saved Cards
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let card of savedCards; let index = index">
+                <form #savedCard="ngForm" (ngSubmit)="deleteCard(index)" class="checkout">
+                    <div class="form-row">
+                        <p> {{card.brand}} card ending with {{card.last4}} expiry:{{card.exp_month}}/{{card.exp_year}} </p>
+                        <div id="card-errors" role="alert" *ngIf="error">{{ error }}</div>
+                        <button type="submit">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true" >
+            <mat-expansion-panel-header class="materialHeader">
+                <mat-panel-title>
+                    Add Debit/Credit Card
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+                <form #checkout="ngForm"  class="checkout"  (ngSubmit)="onSubmit(checkout)" >
+                    <div class="form-row">
+                        <label for="card-info">Card Info</label>
+                        <div id="card-info" #cardInfo></div>
+                        <div id="card-errors" role="alert" *ngIf="error">{{ error }}</div>
+                    </div>
+                    <button type="submit">Save</button>
+                </form>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

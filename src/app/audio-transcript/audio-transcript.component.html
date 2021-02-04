@@ -1,0 +1,9 @@
+<input type="file" (change)="handleFileSelect($event)" />
+<button type="button" (click)="handleConvert()">Convert to Transcript</button>
+<mat-spinner *ngIf="isLoading" class="m-auto"></mat-spinner>
+
+<!-- <pre *ngIf="videoTranscript">{{ videoTranscript | json }}</pre> -->
+
+<pre *ngFor="let item of videoTranscript | keyvalue: originalOrder">
+    {{ fancyTimeFormat(item.key) }} : {{ item.value }}
+</pre>

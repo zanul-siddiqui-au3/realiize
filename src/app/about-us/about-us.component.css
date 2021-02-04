@@ -1,0 +1,58 @@
+.missionHead{
+    font-weight: bold;
+    padding-top:5%;
+    padding-bottom:5%;
+    text-align:left;
+}
+.missionContent{
+    text-align: left !important;
+}
+.mission{
+    float: left !important;
+}
+.sideBar{
+    margin-top:9%;
+}
+.sideBar ul{
+    list-style-type: none;
+    text-align: left !important;    
+}
+.sideBar ul li {
+    padding:2%;
+    border-bottom: 1px solid #ccc;
+}
+.head{
+    padding-top: 3px;
+    position: absolute;
+    top: 25%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color:#333; 
+
+}
+.faIcons{
+    color:#333 !important;
+}
+.aboutUs{
+    width: 80%;
+    margin: 0 auto;
+}
+.imageBackground{
+    background-image:url("https://s3.amazonaws.com/assets-investx-com/assets/v2/Images/SiteArea+Images/aboutus%5B1%5D.jpg");
+    background-size: cover;
+    height: 500px;
+}
+@media only screen and (max-width: 600px) {
+    .sideBar ul li{
+        border: 1px solid #000 !important;
+        padding: 6%;
+        margin: 2%;
+        float: left;
+        width: 80%;
+    }
+    .aboutUs{
+        width: 90%;
+        margin: 0 auto;
+    }
+}

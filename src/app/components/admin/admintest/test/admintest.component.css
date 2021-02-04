@@ -1,0 +1,33 @@
+
+        .rel-container {
+          position: relative;
+      }
+      .filter-card {
+        position: absolute;
+        top: 0;
+        right: -300px;
+        width: 300px !important;
+        z-index: 100;
+        transition: .5s
+    }
+
+    .edit-card {
+        position: absolute;
+        top: 0;
+        left: -300px;
+        width: 300px !important;
+        z-index: 100;
+        transition: .5s
+    }
+
+    .filterbar {
+        right: 0px;
+      }
+
+      .editbar {
+        left: 0px;
+      }
+            test {
+
+            };
+            

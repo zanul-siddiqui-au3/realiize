@@ -1,0 +1,14 @@
+.form-width{
+    width:60%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    margin-top: 5%;
+}
+@media screen and (max-width: 600px) {
+    .form-width{
+        width:95% !important;
+        margin:0 auto !important;
+    }
+
+
+}

@@ -1,0 +1,113 @@
+<!-- <mat-card class="card">
+  <mat-card-header>
+    <mat-card-subtitle>Please enter your name, email and create a password.</mat-card-subtitle>
+  </mat-card-header>
+  <form class="login-form" #user="ngForm" name="user" (ngSubmit)="submit(user)">
+    <fieldset ngModelGroup="name">
+      <mat-form-field class="col-xs-12">
+        <input ngModel name="first" matInput type="text" placeholder="First Name">
+      </mat-form-field>
+      <mat-form-field class="col-xs-12">
+        <input ngModel name="last" matInput type="text" placeholder="Last Name">
+      </mat-form-field>
+    </fieldset>
+    <mat-form-field class="col-xs-12">
+      <input [(ngModel)]="user.email" matInput type="text" name="email" placeholder="email">
+    </mat-form-field>
+    <mat-form-field class="col-xs-12">
+      <input [(ngModel)]="user.password" matInput type="password" name="password" placeholder="Password">
+    </mat-form-field>
+    <section class="col-xs-12">
+      <mat-checkbox color="primary" [(ngModel)]="user.subscribedToNewsletter" name="subscribedToNewsletter" [checked]="true">Subscribe
+        to Newsletter</mat-checkbox>
+    </section>
+
+    <div>
+      <button type="submit" mat-raised-button color="primary">Register</button>
+    </div>
+    <a routerLink="/login">Already have an account? Login here.</a>
+  </form>
+  <p>or</p>
+  <b class="text-center">Register using Social</b>
+  <hr>
+  <button mat-raised-button color="accent" (click)="socialSignIn('facebook')">Facebook</button>
+  <button mat-raised-button color="accent" (click)="socialSignIn('google')">Google</button> -->
+  <!-- <button (click)="socialSignIn('linkedin')">Sign up with Linkedin</button>  -->
+<!-- </mat-card> -->
+
+
+
+<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+  <div class="container">
+    <div class="card login-card">
+      <div class="row no-gutters">
+        <div class="col-md-5">
+          <img src="/assets/images/login.svg" alt="login" class="login-card-img">
+        </div>
+        <div class="col-md-7">
+          <div class="card-body">
+            <div class="brand-wrapper">
+              <img src="/assets/images/brand_logo.png" alt="logo" class="logo">
+            </div>
+            <p class="login-card-description">Register Account</p>
+            <form #user="ngForm" name="user" (ngSubmit)="submit(user)" >
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-6">
+                      <label for="firstName" class="sr-only">First Name</label>
+                      <input type="text" ngModel name="first" id="firstName" class="form-control" placeholder="First Name">
+                    </div>
+                    <div class="col-6">
+                      <label for="lastName" class="sr-only">Last Name</label>
+                      <input type="text" ngModel name="last" id="lastName" class="form-control" placeholder="Last Name">
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group mb-4">
+                  <div class="row">
+                    <div class="col-6">
+                      <label for="email" class="sr-only">Email</label>
+                      <input  type="email" ngModel name="email" id="email" class="form-control" placeholder="Email address">
+                    </div>
+                    <div class="col-6">
+                      <label for="password" class="sr-only">Password</label>
+                      <input type="password" ngModel name="password" id="password" class="form-control" placeholder="***********">
+                    </div>
+                  </div>
+                
+                </div>
+                <input name="login" id="login" class="btn btn-block login-btn mb-4" type="submit" value="Register">
+             </form>
+              <p class="login-card-footer-text">Already have an account? <a routerLink="/login" class="text-reset" > Login here.</a></p>
+              <div class="login-btns">
+                <button type="button" class="btn btn-block btn-google" (click)="socialSignIn('google')" >
+                  Register IN WITH GOOGLE 
+                </button>
+                <button type="button" class="btn btn-block btn-facebook" (click)="socialSignIn('facebook')" >
+                   Register WITH FACEBOOK 
+              </button>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

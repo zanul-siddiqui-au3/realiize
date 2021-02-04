@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": "./",
+    "types": ["node" ,  "stripe-v3"]
+  },
+  "angularCompilerOptions": {
+    "preserveWhitespaces": false
+  }
+,
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}
