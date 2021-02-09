@@ -1,8 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { UserService } from "../auth/user-service.service";
 import { AwsUploadService } from "../services/user/aws-upload.service";
 import { KeyValue } from "@angular/common";
 import Swal from "sweetalert2";
+import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { UserService } from "../auth/user-service.service";
 
 @Component({
   selector: "app-audio-transcript",
@@ -13,42 +15,78 @@ export class AudioTranscriptComponent implements OnInit {
   file: any = "";
   fileName: string = "";
   isLoading: boolean = false;
+  fullFileName: string = "";
+  fileType: string = "";
   videoTranscript;
   constructor(
-    private userService: UserService,
-    private awsUploadService: AwsUploadService
+    private awsUploadService: AwsUploadService,
+    private userService: UserService
   ) {}
+
+  awsUrl: string = "";
 
   ngOnInit(): void {}
 
   handleFileSelect(e) {
     this.file = e.target.files[0];
     this.fileName = `${e.target.files[0]["name"].split(".")[0]}`;
+    this.fullFileName = e.target.files[0]["name"];
+    this.fileType = e.target.files[0]["type"];
   }
 
   handleConvert = async () => {
     this.isLoading = true;
-    const fileData = await this.awsUploadService.uploadToS3(this.file);
-    const fileName = this.fileName;
-    this.userService
-      .getTranscript({ fileData: fileData["Location"], fileName })
-      .subscribe(
-        (data) => {
-          this.videoTranscript = data;
-          this.isLoading = false;
-          console.log(data);
-        },
-        (error: any) => {
+    this.awsUploadService
+      .getSignedUrlS3(this.fullFileName, this.fileType)
+      .subscribe(({ url, keyFile }) => {
+        this.awsUploadService
+          .uploadfileAWSS3(url, this.fileType, this.file)
+          .subscribe(
+            (data) => {
+              if (data["type"] === 4) {
+                this.awsUrl = `https://${environment.S3_BUCKET_NAME}.s3.${environment.S3_Region}.amazonaws.com/${keyFile}`;
+                this.userService
+                  .getTranscript({
+                    fileData: this.awsUrl,
+                    fileName: this.fileName,
+                  })
+                  .subscribe(
+                    (data) => {
+                      this.videoTranscript = data;
+                      this.isLoading = false;
+                    },
+                    (error) => {
+                      Swal({
+                        type: "error",
+                        title: `Oops... ${error.error.name}!`,
+                        text: error.error.message,
+                      });
+                      this.isLoading = false;
+                      throw error;
+                    }
+                  );
+              }
+            },
+            (error) => {
+              Swal({
+                type: "error",
+                title: `Oops... ${error.error.name}!`,
+                text: error.error.message,
+              });
+              this.isLoading = false;
+              throw error;
+            }
+          );
+        (error) => {
           Swal({
             type: "error",
             title: `Oops... ${error.error.name}!`,
             text: error.error.message,
           });
-          console.error(`Error: ${error}`);
           this.isLoading = false;
           throw error;
-        }
-      );
+        };
+      });
   };
 
   fancyTimeFormat(duration) {

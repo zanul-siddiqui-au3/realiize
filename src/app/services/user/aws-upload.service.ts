@@ -1,46 +1,41 @@
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpRequest,
+} from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import * as S3 from "aws-sdk/clients/s3";
-import * as moment from "moment";
-import { environment } from "../../../environments/environment";
+import { throwError as observableThrowError, Observable } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
 export class AwsUploadService {
-  constructor() {}
-
-  uploadToS3 = async (file) => {
-    const BUCKET_NAME = environment.BUCKET_NAME;
-    const S3_USER_KEY = environment.S3_USER_KEY;
-    const S3_USER_SECRET = environment.S3_USER_SECRET;
-    const currentDateFormat = moment().format("MM-DD-YYYY__HH-mm-ss");
-    const s3bucket = new S3({
-      accessKeyId: S3_USER_KEY,
-      secretAccessKey: S3_USER_SECRET,
-    });
-    const params = {
-      Bucket: BUCKET_NAME,
-      Key: `${currentDateFormat}_${file.name}`,
-      Body: file,
-    };
-    const s3BucketPromise = await s3bucket.upload(params).promise();
-    return s3BucketPromise;
+  BASE_URL = `/api/aws`;
+  constructor(private http: HttpClient) {}
+  getSignedUrlS3 = (fileName, fileType) => {
+    const PATH = `${this.BASE_URL}/get-aws-url`;
+    let params = new HttpParams()
+      .set("fileName", fileName)
+      .set("fileType", fileType);
+    return this.http.get(PATH, { params }).pipe(
+      map((res: any) => res),
+      catchError((error: any) =>
+        observableThrowError(error.error || "Server error")
+      )
+    );
   };
 
-  uploadToS3WithPercentage = (file, evtFn) => {
-    const BUCKET_NAME = environment.BUCKET_NAME;
-    const S3_USER_KEY = environment.S3_USER_KEY;
-    const S3_USER_SECRET = environment.S3_USER_SECRET;
-
-    const s3bucket = new S3({
-      accessKeyId: S3_USER_KEY,
-      secretAccessKey: S3_USER_SECRET,
+  uploadfileAWSS3(fileuploadurl, contenttype, file) {
+    const headers = new HttpHeaders({
+      "Content-Type": contenttype,
+      "anonymous-request": "",
     });
-    const params = {
-      Bucket: BUCKET_NAME,
-      Key: file.name + Math.random(),
-      Body: file,
-    };
-    return s3bucket.upload(params).on("httpUploadProgress", evtFn).promise();
-  };
+    const req = new HttpRequest("PUT", fileuploadurl, file, {
+      headers: headers,
+      reportProgress: true,
+    });
+    return this.http.request(req);
+  }
 }

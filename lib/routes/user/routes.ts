@@ -6,13 +6,10 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jwt-simple";
 import * as jsonwt from "jsonwebtoken";
 import { EmailService } from "../../services/email";
-import * as fs from "fs";
-// import { mailchimpService } from '../../services/mailchimp';
 import * as dotenv from "dotenv";
 dotenv.load();
 // Internal Dependencies
 import { User } from "../../db";
-
 // Helpers
 import {
   audioFromVideo,
@@ -20,15 +17,6 @@ import {
   getTransciptFromVideo,
   uploadToGcpCloud,
 } from "./helpers";
-
-// import * as speech from '@google-cloud/speech';
-const speech = require("@google-cloud/speech");
-const linear16 = require("linear16");
-const extractAudio = require("ffmpeg-extract-audio");
-const ffmpeg = require("ffmpeg");
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-var ffmpegCommand = require("fluent-ffmpeg");
-ffmpegCommand.setFfmpegPath(ffmpegPath);
 
 export class UserRoutes {
   static JWT_SECRET = process.env.JWT_SECRET || "i am a tea pot";
