@@ -1,22 +1,25 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 dotenv.config();
 
 class Config {
-
   STRIPE_SECRET_KEY: string;
   GMAIL_USER: string;
   GMAIL_PASS: string;
   CONTACT_FORM_TARGET: string;
   MAILCHIMP_KEY: string;
   MAILCHIMP_LIST_ID: string;
-  STRIPE_PRICEID : string;
-  SENDGRID_API_KEY : string;
-  SENDGRID_USER_EMAIL : string;
-  UPLOAD_PATH_FRONTEND_BUILD : string;
-  SFTP_HOST : string;
-  SFTP_PORT : string;
-  SFTP_USERNAME : string;
-  SFTP_PASSWORD : string;
+  STRIPE_PRICEID: string;
+  SENDGRID_API_KEY: string;
+  SENDGRID_USER_EMAIL: string;
+  UPLOAD_PATH_FRONTEND_BUILD: string;
+  SFTP_HOST: string;
+  SFTP_PORT: string;
+  SFTP_USERNAME: string;
+  SFTP_PASSWORD: string;
+  S3_USER_KEY: string;
+  S3_USER_SECRET: string;
+  S3_BUCKET_NAME: string;
+  S3_BUCKET_REGION: string;
   constructor() {
     this.STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
     this.GMAIL_USER = process.env.GMAIL_USER;
@@ -32,9 +35,11 @@ class Config {
     this.SFTP_PORT = process.env.SFTP_PORT;
     this.SFTP_USERNAME = process.env.SFTP_USERNAME;
     this.SFTP_PASSWORD = process.env.SFTP_PASSWORD;
+    this.S3_USER_KEY = process.env.S3_USER_KEY;
+    this.S3_USER_SECRET = process.env.S3_USER_SECRET;
+    this.S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
+    this.S3_BUCKET_REGION = process.env.S3_BUCKET_REGION;
   }
-
 }
 
 export const config = new Config();
-

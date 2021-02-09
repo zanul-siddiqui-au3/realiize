@@ -5,6 +5,7 @@ import {
   ViewChild,
   Renderer2,
   AfterViewInit,
+  OnDestroy,
 } from "@angular/core";
 import * as RecordRTC from "recordrtc/RecordRTC.min";
 import * as moment from "moment";
@@ -12,13 +13,16 @@ import { AwsUploadService } from "../services/user/aws-upload.service";
 import { UserService } from "../auth/user-service.service";
 import Swal from "sweetalert2";
 import { KeyValue } from "@angular/common";
-import { resolve } from "dns";
+import { environment } from "../../environments/environment";
+import { Observable } from "rxjs";
+
 @Component({
   selector: "app-screen-recorder",
   templateUrl: "./screen-recorder.component.html",
   styleUrls: ["./screen-recorder.component.css"],
 })
-export class ScreenRecorderComponent implements OnInit, AfterViewInit {
+export class ScreenRecorderComponent
+  implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild("videoRef", { static: true }) video: ElementRef;
   @ViewChild("videoContainer", { static: true }) videoConatiner: ElementRef;
   @ViewChild("downloadLink", { static: true }) downloadLinkRef: ElementRef;
@@ -36,13 +40,28 @@ export class ScreenRecorderComponent implements OnInit, AfterViewInit {
 
   recorder;
 
-  videoFile;
-
-  videoTranscript;
-
-  videoName;
-
   isLoading: boolean = false;
+
+  videoData = {
+    videoName: "",
+    videoTranscript: "",
+    videoFile: null,
+    awsUrl: "",
+    isRecorded: false,
+    videoLength: null,
+  };
+
+  dateStarted = null;
+
+  commentText: string = "";
+
+  commentTimeStampObj = {};
+
+  videoObserver;
+
+  videoObservable;
+
+  currentVideoDuration;
 
   constructor(
     private render: Renderer2,
@@ -50,7 +69,9 @@ export class ScreenRecorderComponent implements OnInit, AfterViewInit {
     private userService: UserService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.madeVideoObserver();
+  }
 
   ngAfterViewInit() {}
 
@@ -186,6 +207,7 @@ export class ScreenRecorderComponent implements OnInit, AfterViewInit {
           },
         });
         this.recorder.startRecording();
+        this.dateStarted = new Date().getTime();
       });
     });
   }
@@ -194,76 +216,97 @@ export class ScreenRecorderComponent implements OnInit, AfterViewInit {
     this.recordOption.isStart = !this.recordOption.isStart;
     this.handleStopRecordingOption().then(() => {
       this.handleUploadBlob();
+      // this.subscribeVideoObserver();
     });
   }
 
   handleStopRecordingOption = () => {
     return new Promise((resolve, reject) => {
       this.recorder.stopRecording(() => {
+        this.videoData.videoLength =
+          (new Date().getTime() - this.dateStarted) / 1000;
         var blob = this.recorder.getBlob();
-
         this.render.setAttribute(
           this.downloadLinkRef.nativeElement,
           "href",
           URL.createObjectURL(blob)
         );
-        this.videoName = `${moment().format(
+        this.videoData.videoName = `${moment().format(
           "MM-DD-YYYY__HH-mm-ss"
         )}_recorderVideo.mkv`;
-        this.videoFile = new File([blob], this.videoName);
+        this.videoData.videoFile = new File([blob], this.videoData.videoName);
         this.recordOption.isDownloadAvailable = true;
         this.render.setProperty(this.video.nativeElement, "muted", true);
         this.render.setProperty(this.video.nativeElement, "srcObject", null);
         this.render.setProperty(
           this.video.nativeElement,
           "src",
-          URL.createObjectURL(blob)
+          `${URL.createObjectURL(blob)}#t=${this.videoData.videoLength - 2},${
+            this.videoData.videoLength
+          }`
         );
         this.screen.getTracks().forEach((track) => track.stop());
         this.camera.getTracks().forEach((track) => track.stop());
-        // [(this.screen, this.camera)].forEach(function (stream) {
-        //   stream.getTracks().forEach(function (track) {
-        //     track.stop();
-        //   });
-        // });
         resolve(true);
       });
     });
   };
 
   handleUploadBlob = async () => {
-    try {
-      this.isLoading = true;
-      const fileData = await this.awsUploadService.uploadToS3(this.videoFile);
-      const fileName = this.videoName;
-      this.userService
-        .getTranscript({ fileData: fileData["Location"], fileName })
-        .subscribe(
-          (data) => {
-            this.videoTranscript = data;
-            this.isLoading = false;
-          },
-          (error: any) => {
-            Swal({
-              type: "error",
-              title: `Oops... ${error.error.name}!`,
-              text: error.error.message,
-            });
-            this.isLoading = false;
-            console.error(`Error: ${error}`);
-            throw error;
-          }
-        );
-    } catch (error) {
-      Swal({
-        type: "error",
-        title: `Oops... ${error.error.name}!`,
-        text: error.error.message,
-      });
-      console.error(`Error: ${error}`);
-      this.isLoading = false;
-      throw error;
-    }
+    // this.isLoading = true;
+    this.videoData.isRecorded = true;
+    // this.awsUploadService
+    //   .getSignedUrlS3(this.videoData.videoName, "video/x-matroska")
+    //   .subscribe(({ url, keyFile }) => {
+    //     this.awsUploadService
+    //       .uploadfileAWSS3(url, "video/x-matroska", this.videoData.videoFile)
+    //       .subscribe(
+    //         (data) => {
+    //           if (data["url"]) {
+    //             this.videoData.awsUrl = `https://${environment.S3_BUCKET_NAME}.s3.${environment.S3_Region}.amazonaws.com/${keyFile}`;
+    //             this.userService
+    //               .getTranscript({
+    //                 fileData: this.videoData.awsUrl,
+    //                 fileName: this.videoData.videoName,
+    //               })
+    //               .subscribe(
+    //                 (data) => {
+    //                   this.videoData.videoTranscript = data;
+    //                   this.isLoading = false;
+    //                   // this.videoData.isRecorded = true;
+    //                 },
+    //                 (error) => {
+    //                   Swal({
+    //                     type: "error",
+    //                     title: `Oops... ${error.error.name}!`,
+    //                     text: error.error.message,
+    //                   });
+    //                   this.isLoading = false;
+    //                   throw error;
+    //                 }
+    //               );
+    //           }
+    //         },
+    //         (error) => {
+    //           Swal({
+    //             type: "error",
+    //             title: `Oops... ${error.error.name}!`,
+    //             text: error.error.message,
+    //           });
+    //           this.isLoading = false;
+    //           throw error;
+    //         }
+    //       );
+    //     (error) => {
+    //       Swal({
+    //         type: "error",
+    //         title: `Oops... ${error.error.name}!`,
+    //         text: error.error.message,
+    //       });
+    //       this.isLoading = false;
+    //       throw error;
+    //     };
+    //   });
   };
 
   fancyTimeFormat(duration) {
@@ -295,4 +338,87 @@ export class ScreenRecorderComponent implements OnInit, AfterViewInit {
   ): number => {
     return 0;
   };
+
+  fancySecondtoMinute(minute) {
+    const hrs = ~~(minute / 3600);
+    const mins = ~~((minute % 3600) / 60);
+    const secs = ~~minute % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    let ret = "";
+
+    if (hrs > 0) {
+      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
+  }
+
+  handleAddComment = () => {
+    this.commentTimeStampObj[
+      this.fancySecondtoMinute(Math.floor(this.video.nativeElement.currentTime))
+    ] = this.commentText;
+  };
+
+  madeVideoObserver() {
+    this.videoObservable = new Observable((observer) => {
+      setInterval(() => {
+        observer.next(
+          this.fancySecondtoMinute(
+            Math.floor(this.video.nativeElement.currentTime)
+          )
+        );
+      }, 1000);
+    });
+  }
+
+  subscribeVideoObserver() {
+    this.videoObserver = this.videoObservable.subscribe((data) => {
+      this.currentVideoDuration = data;
+    });
+  }
+
+  handleVideoClick(e) {
+    if (this.videoData.isRecorded) {
+      if (e.type === "play") {
+        this.subscribeVideoObserver();
+      } else if (e.type === "pause") {
+        this.videoObserver.unsubscribe();
+      }
+    }
+  }
+
+  handleHighlighedComment(key) {
+    const currentTime = this.convertIntoSeconds(this.currentVideoDuration);
+    const keyTime = this.convertIntoSeconds(key);
+    if (currentTime - keyTime <= 5 && currentTime - keyTime >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  convertIntoSeconds(time) {
+    const timeArr = time.split(":");
+    let timeInSeconds;
+    if (timeArr.length === 2) {
+      timeInSeconds = parseInt(timeArr[0]) * 60 + parseInt(timeArr[1]);
+    }
+    if (timeArr.length === 3) {
+      timeInSeconds =
+        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
+    }
+    return timeInSeconds;
+  }
+
+  handleRedirectVideo(key) {
+    let timeInSeconds = this.convertIntoSeconds(key);
+    this.video.nativeElement.currentTime = timeInSeconds;
+  }
+
+  ngOnDestroy() {
+    this.videoObserver.unsubscribe();
+  }
 }
