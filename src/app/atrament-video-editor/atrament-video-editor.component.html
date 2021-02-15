@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="row">
+    <div class="col-8">
+      <video
+        class="video mt-5"
+        #videoRef
+        src="https://boilerplate-s3-upload.s3.us-east-2.amazonaws.com/02-02-2021__18-07-20_videoplayback+(2).mp4"
+        preload="auto"
+        (play)="handleVideoClick($event)"
+        (pause)="handleVideoClick($event)"
+        autoplay
+        controls
+        (loadedmetadata)="metaDataLoaded()"
+      ></video>
+      <canvas
+        #canvasRef
+        (mousedown)="handleStartPaint($event)"
+        (mouseup)="handleStopPaint()"
+        (mousemove)="handleStartPaint($event)"
+      ></canvas>
+    </div>
+    <div class="col-4 mt-5">
+      <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+        <mat-button-toggle
+          value="annotate"
+          (change)="handleButtonToggle($event)"
+          >Annotate</mat-button-toggle
+        >
+        <mat-button-toggle
+          value="highLight"
+          (change)="handleButtonToggle($event)"
+          >Highlight</mat-button-toggle
+        >
+      </mat-button-toggle-group>
+      <p class="text-danger">Storke length</p>
+      <mat-slider
+        min="1"
+        max="20"
+        step="1"
+        value="5"
+        class="w-100"
+        [(ngModel)]="drawingDetails.strokeLength"
+      ></mat-slider>
+      <p class="mt-3">Choose Stroke Color</p>
+      <input
+        type="color"
+        [(ngModel)]="drawingDetails.strokeColor"
+      /><br /><br />
+    </div>
+  </div>
+</div>

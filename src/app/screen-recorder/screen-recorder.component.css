@@ -12,3 +12,24 @@
 .highlighed_list {
   border: 2px solid red;
 }
+
+.video_options {
+  position: absolute;
+  top: 83%;
+  left: 50%;
+  right: 0;
+}
+
+.canvas_block {
+  position: absolute;
+  z-index: -1;
+}
+
+.main_block {
+  position: absolute;
+  z-index: 0;
+}
+
+.containers {
+  margin: 50px;
+}
