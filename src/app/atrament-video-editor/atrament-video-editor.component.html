@@ -84,6 +84,36 @@
         type="color"
         [(ngModel)]="drawingDetails.strokeColor"
       /><br /><br />
+
+      <textarea [(ngModel)]="commentText" class="mb-5 w-100"></textarea>
+      <button
+        mat-raised-button
+        color="primary"
+        class="mr-5 mb-3"
+        (click)="handleAddComment()"
+      >
+        Add Comment
+      </button>
+      <ul
+        class="list-group"
+        *ngFor="let item of commentTimeStampObj | keyvalue"
+      >
+        <li
+          class="list-group-item"
+          [ngClass]="{
+            highlighed_list:
+              convertIntoSeconds(currentVideoDuration) -
+                convertIntoSeconds(item.key) <=
+                5 &&
+              convertIntoSeconds(currentVideoDuration) -
+                convertIntoSeconds(item.key) >=
+                0
+          }"
+        >
+          <p (click)="handleRedirectVideo(item.key)">{{ item.key }}</p>
+          &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;&nbsp;{{ item.value }}
+        </li>
+      </ul>
     </div>
   </div>
 </div>

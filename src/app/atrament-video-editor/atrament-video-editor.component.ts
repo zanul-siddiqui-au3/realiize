@@ -10,6 +10,10 @@ export class AtramentVideoEditorComponent implements OnInit {
   @ViewChild("videoRef", { static: true }) video: ElementRef;
   @ViewChild("canvasRef", { static: true }) canvas: ElementRef;
 
+  commentTimeStampObj = {};
+
+  commentText: string = "";
+
   videoObserver;
 
   videoObservable;
@@ -68,11 +72,13 @@ export class AtramentVideoEditorComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.madeVideoObserver();
+    this.subscribeVideoObserver();
+  }
 
   ngAfterViewInit() {
     this.canvasCtx = this.canvas.nativeElement.getContext("2d");
-    this.madeVideoObserver();
   }
 
   metaDataLoaded() {
@@ -157,7 +163,9 @@ export class AtramentVideoEditorComponent implements OnInit {
       }
     });
   };
+
   count = 1;
+
   handleCheckCircleOverlap() {
     if (this.count === 1) {
       this.count = 0;
@@ -436,5 +444,60 @@ export class AtramentVideoEditorComponent implements OnInit {
 
   handleButtonToggle(e) {
     this.currentDrawingTool = e.value;
+  }
+
+  fancySecondtoMinute(minute) {
+    const hrs = ~~(minute / 3600);
+    const mins = ~~((minute % 3600) / 60);
+    const secs = ~~minute % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    let ret = "";
+
+    if (hrs > 0) {
+      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
+  }
+
+  handleAddComment = () => {
+    this.commentTimeStampObj[
+      this.fancySecondtoMinute(Math.floor(this.video.nativeElement.currentTime))
+    ] = this.commentText;
+  };
+
+  handleHighlighedComment(key) {
+    const currentTime = this.convertIntoSeconds(this.currentVideoDuration);
+    const keyTime = this.convertIntoSeconds(key);
+    if (currentTime - keyTime <= 5 && currentTime - keyTime >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  convertIntoSeconds(time) {
+    if (time.toString().includes(":")) {
+      const timeArr = time.split(":");
+      let timeInSeconds;
+      if (timeArr.length === 2) {
+        timeInSeconds = parseInt(timeArr[0]) * 60 + parseInt(timeArr[1]);
+      }
+      if (timeArr.length === 3) {
+        timeInSeconds =
+          parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
+      }
+      return timeInSeconds;
+    } else {
+      return time;
+    }
+  }
+
+  handleRedirectVideo(key) {
+    let timeInSeconds = this.convertIntoSeconds(key);
+    this.video.nativeElement.currentTime = timeInSeconds;
   }
 }

@@ -6,3 +6,7 @@ body {
 .main-video {
   display: none;
 }
+
+.highlighed_list {
+  border: 2px solid red;
+}
