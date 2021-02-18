@@ -253,60 +253,60 @@ export class ScreenRecorderComponent
   };
 
   handleUploadBlob = async () => {
-    // this.isLoading = true;
+    this.isLoading = true;
     this.videoData.isRecorded = true;
-    // this.awsUploadService
-    //   .getSignedUrlS3(this.videoData.videoName, "video/x-matroska")
-    //   .subscribe(({ url, keyFile }) => {
-    //     this.awsUploadService
-    //       .uploadfileAWSS3(url, "video/x-matroska", this.videoData.videoFile)
-    //       .subscribe(
-    //         (data) => {
-    //           if (data["url"]) {
-    //             this.videoData.awsUrl = `https://${environment.S3_BUCKET_NAME}.s3.${environment.S3_Region}.amazonaws.com/${keyFile}`;
-    //             this.userService
-    //               .getTranscript({
-    //                 fileData: this.videoData.awsUrl,
-    //                 fileName: this.videoData.videoName,
-    //               })
-    //               .subscribe(
-    //                 (data) => {
-    //                   this.videoData.videoTranscript = data;
-    //                   this.isLoading = false;
-    //                   // this.videoData.isRecorded = true;
-    //                 },
-    //                 (error) => {
-    //                   Swal({
-    //                     type: "error",
-    //                     title: `Oops... ${error.error.name}!`,
-    //                     text: error.error.message,
-    //                   });
-    //                   this.isLoading = false;
-    //                   throw error;
-    //                 }
-    //               );
-    //           }
-    //         },
-    //         (error) => {
-    //           Swal({
-    //             type: "error",
-    //             title: `Oops... ${error.error.name}!`,
-    //             text: error.error.message,
-    //           });
-    //           this.isLoading = false;
-    //           throw error;
-    //         }
-    //       );
-    //     (error) => {
-    //       Swal({
-    //         type: "error",
-    //         title: `Oops... ${error.error.name}!`,
-    //         text: error.error.message,
-    //       });
-    //       this.isLoading = false;
-    //       throw error;
-    //     };
-    //   });
+    this.awsUploadService
+      .getSignedUrlS3(this.videoData.videoName, "video/x-matroska")
+      .subscribe(({ url, keyFile }) => {
+        this.awsUploadService
+          .uploadfileAWSS3(url, "video/x-matroska", this.videoData.videoFile)
+          .subscribe(
+            (data) => {
+              if (data["url"]) {
+                this.videoData.awsUrl = `https://${environment.S3_BUCKET_NAME}.s3.${environment.S3_Region}.amazonaws.com/${keyFile}`;
+                this.userService
+                  .getTranscript({
+                    fileData: this.videoData.awsUrl,
+                    fileName: this.videoData.videoName,
+                  })
+                  .subscribe(
+                    (data) => {
+                      this.videoData.videoTranscript = data;
+                      this.isLoading = false;
+                      this.videoData.isRecorded = true;
+                    },
+                    (error) => {
+                      Swal({
+                        type: "error",
+                        title: `Oops... ${error.error.name}!`,
+                        text: error.error.message,
+                      });
+                      this.isLoading = false;
+                      throw error;
+                    }
+                  );
+              }
+            },
+            (error) => {
+              Swal({
+                type: "error",
+                title: `Oops... ${error.error.name}!`,
+                text: error.error.message,
+              });
+              this.isLoading = false;
+              throw error;
+            }
+          );
+        (error) => {
+          Swal({
+            type: "error",
+            title: `Oops... ${error.error.name}!`,
+            text: error.error.message,
+          });
+          this.isLoading = false;
+          throw error;
+        };
+      });
   };
 
   fancyTimeFormat(duration) {

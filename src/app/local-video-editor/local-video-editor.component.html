@@ -1,0 +1,19 @@
+<div class="container">
+  <video
+    class="video mt-5"
+    #videoRef
+    src="https://boilerplate-s3-upload.s3.us-east-2.amazonaws.com/02-02-2021__18-07-20_videoplayback+(2).mp4"
+    preload="auto"
+    (play)="handleVideoClick($event)"
+    (pause)="handleVideoClick($event)"
+    autoplay
+    controls
+    (loadedmetadata)="metaDataLoaded()"
+  ></video>
+  <canvas
+    #canvasRef
+    (mousedown)="handleStartPaint($event)"
+    (mouseup)="handleStopPaint()"
+    (mousemove)="handleStartPaint($event)"
+  ></canvas>
+</div>
