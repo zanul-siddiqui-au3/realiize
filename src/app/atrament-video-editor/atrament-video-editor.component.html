@@ -55,6 +55,7 @@
           [(ngModel)]="videoStatus.currentTime"
           (change)="handleVideoClick({ type: 'slider' })"
         ></mat-slider>
+        <p>{{ fancySecondtoMinute(currentVideoDuration) }}</p>
       </div>
     </div>
     <div class="col-4 mt-5" [hidden]="!videoStatus.isNotFullScreen">
