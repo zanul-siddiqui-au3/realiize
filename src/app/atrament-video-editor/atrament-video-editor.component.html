@@ -1,130 +1,230 @@
-<div [ngClass]="{ container: videoStatus.isNotFullScreen }">
-  <div class="row">
-    <div
-      [ngClass]="{
-        'col-8': videoStatus.isNotFullScreen,
-        'col-12': !videoStatus.isNotFullScreen
-      }"
-    >
-      <video
-        class="main-video mt-5"
-        #videoRef
-        src="https://boilerplate-s3-upload.s3.us-east-2.amazonaws.com/02-02-2021__18-07-20_videoplayback+(2).mp4"
-        preload="auto"
-        autoplay
-        controls
-        (loadedmetadata)="metaDataLoaded()"
-      ></video>
-      <canvas
-        #canvasRef
-        (mousedown)="handleStartPaint($event)"
-        (mouseup)="handleStopPaint()"
-        (mousemove)="handleStartPaint($event)"
+<div
+  [ngClass]="{
+    container: videoStatus.isNotFullScreen,
+    fullScreen_canvas_background: !videoStatus.isNotFullScreen
+  }"
+>
+  <div class="container-fluid" #mainContainer>
+    <div class="row">
+      <div
         [ngClass]="{
-          'mt-5': videoStatus.isNotFullScreen,
-          'canvas-full': !videoStatus.isNotFullScreen
+          'col-lg-8': videoStatus.isNotFullScreen,
+          'col-md-12': videoStatus.isNotFullScreen,
+          'col-sm-12': videoStatus.isNotFullScreen,
+          'col-12': !videoStatus.isNotFullScreen
         }"
-      ></canvas>
-      <div class="video_actions mt-3" [hidden]="!videoStatus.isNotFullScreen">
-        <button (click)="handleVideoClick({ type: 'play' })" class="mr-2">
-          Play
-        </button>
-        <button (click)="handleVideoClick({ type: 'pause' })" class="mr-2">
-          Pause
-        </button>
-        <button (click)="handleVideoClick({ type: 'fullScreen' })" class="mr-2">
-          Full Screen
-        </button>
-        <p class="text-primary" class="mt-2">Volume</p>
-        <mat-slider
-          min="0"
-          max="1"
-          step="0.1"
-          value="0.1"
-          class="w-100"
-          [(ngModel)]="videoStatus.volume"
-          (change)="handleVideoClick({ type: 'volume' })"
-        ></mat-slider>
-        <p>Video Slider</p>
-        <mat-slider
-          min="0"
-          [max]="videoStatus.totalTime"
-          step="1"
-          value="0"
-          class="w-100"
-          [(ngModel)]="videoStatus.currentTime"
-          (change)="handleVideoClick({ type: 'slider' })"
-        ></mat-slider>
-        <p>{{ fancySecondtoMinute(currentVideoDuration) }}</p>
-      </div>
-    </div>
-    <div class="col-4 mt-5" [hidden]="!videoStatus.isNotFullScreen">
-      <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-        <mat-button-toggle
-          value="annotate"
-          (change)="handleButtonToggle($event)"
-          >Annotate</mat-button-toggle
+        class="px-0 position-realtive"
+      >
+        <div class="main_video">
+          <video
+            class="main-video w-100 mt-5"
+            #videoRef
+            src="https://boilerplate-s3-upload.s3.us-east-2.amazonaws.com/02-02-2021__18-07-20_videoplayback+(2).mp4"
+            preload="auto"
+            autoplay
+            controls
+            (loadedmetadata)="metaDataLoaded()"
+          ></video>
+          <canvas
+            #canvasRef
+            (mousedown)="handleStartPaint($event)"
+            (mouseup)="handleStopPaint()"
+            (mousemove)="handleStartPaint($event)"
+            (mouseover)="handleCanvasMouseOver()"
+            class="w-100"
+            [ngClass]="{
+              'mt-5': videoStatus.isNotFullScreen,
+              fullScreen_canvas: !videoStatus.isNotFullScreen
+            }"
+          ></canvas>
+        </div>
+        <div class="video_slider position-absolute w-100">
+          <input
+            min="0"
+            [max]="videoStatus.totalTime"
+            step="1"
+            value="0"
+            [(ngModel)]="videoStatus.currentTime"
+            (change)="handleVideoClick({ type: 'slider' })"
+            type="range"
+            class="timeline_slider"
+          />
+        </div>
+        <div
+          class="video_actions mt-2"
+          [ngClass]="{ fullScreen_toolbar: !videoStatus.isNotFullScreen }"
         >
-        <mat-button-toggle
-          value="highLight"
-          (change)="handleButtonToggle($event)"
-          >Highlight</mat-button-toggle
-        >
-      </mat-button-toggle-group>
-      <p class="text-danger">Stroke Size</p>
-      <mat-slider
-        min="1"
-        max="20"
-        step="1"
-        value="5"
-        class="w-100"
-        [(ngModel)]="drawingDetails.strokeLength"
-      ></mat-slider>
-      <p class="mt-3">Choose Stroke Color</p>
-      <input
-        type="color"
-        [(ngModel)]="drawingDetails.strokeColor"
-      /><br /><br />
+          <div class="actions_left">
+            <mat-icon
+              (click)="handleVideoClick({ type: 'play' })"
+              class="mr-3 ml-2 icon_play"
+              *ngIf="videoStatus.playStatus == 'pause'"
+              >play_arrow</mat-icon
+            >
+            <mat-icon
+              (click)="handleVideoClick({ type: 'pause' })"
+              class="mr-3 ml-2 icon_play"
+              *ngIf="videoStatus.playStatus == 'play'"
+              >pause</mat-icon
+            >
+            <mat-icon
+              class="action_left_volumeUp"
+              appVolumeControl
+              [controlType]="'show_volume_up'"
+              (volumeUp)="handleVolumeOver()"
+              >volume_up</mat-icon
+            >
+            <mat-slider
+              *ngIf="volumeSliderInfo.isShown"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.1"
+              class="action_left_volume_slider"
+              [(ngModel)]="videoStatus.volume"
+              (change)="handleVideoClick({ type: 'volume' })"
+            ></mat-slider>
+          </div>
+          <div class="actions_right">
+            <ng-template [ngIf]="!editOptionInfo.isShown">
+              <img
+                src="../../assets/images/expand-toggle.png"
+                (click)="handleToogle()"
+                class="icon_expand_toogle"
+              />
+              <mat-icon
+                *ngIf="videoStatus.isNotFullScreen"
+                (click)="handleVideoClick({ type: 'fullScreen' })"
+                class="fullscreen_icon"
+                >fullscreen</mat-icon
+              >
+              <mat-icon
+                *ngIf="!videoStatus.isNotFullScreen"
+                (click)="handleVideoClick({ type: 'fullScreen' })"
+                class="fullscreen_icon"
+                >fullscreen_exit</mat-icon
+              >
+            </ng-template>
+            <ng-template [ngIf]="editOptionInfo.isShown">
+              <input
+                type="color"
+                [(ngModel)]="drawingDetails.strokeColor"
+                class="mr-2 color_picker"
+              />
+              <!-- ----------------------------------- Size Option -->
+              <div class="annotate mr-2">
+                <mat-select
+                  class="annotate_select_group"
+                  [(value)]="drawingDetails.strokeLength"
+                >
+                  <mat-select-trigger
+                    ><mat-icon class="selected_size_icon icon_color"
+                      >minimize</mat-icon
+                    ></mat-select-trigger
+                  >
+                  <mat-option
+                    *ngFor="let option of drawingSizeOptions"
+                    [value]="option.strokeLength"
+                    (click)="handleChangeStorkeLength(option.strokeLength)"
+                  >
+                    <mat-icon
+                      class="icon_color"
+                      (click)="handleChangeStorkeLength(option.strokeLength)"
+                      [ngClass]="{
+                        icon_1x: option.strokeLength === 5,
+                        icon_2x: option.strokeLength === 10,
+                        icon_3x: option.strokeLength === 15,
+                        icon_4x: option.strokeLength === 20
+                      }"
+                      >minimize</mat-icon
+                    >
+                  </mat-option>
+                </mat-select>
+              </div>
+              <!-- ------------------------- Annotate -->
+              <div class="annotate mr-2">
+                <mat-icon
+                  class="selected-icon icon_color"
+                  [ngStyle]="{
+                    color:
+                      currentDrawingTool === 'annotate'
+                        ? drawingDetails.strokeColor
+                        : '#909090'
+                  }"
+                  (click)="handleButtonToggle('annotate')"
+                  >create</mat-icon
+                >
+              </div>
+              <!-- ---------------------------------- Highlight -->
+              <div class="highlight mr-2">
+                <fa-icon
+                  [icon]="highlighterIcon"
+                  class="highlighter_icon icon_color"
+                  [ngStyle]="{
+                    color:
+                      currentDrawingTool === 'highLight'
+                        ? drawingDetails.strokeColor
+                        : '#909090'
+                  }"
+                  (click)="handleButtonToggle('highLight')"
+                ></fa-icon>
+              </div>
 
-      <textarea [(ngModel)]="commentText" class="mb-5 w-100"></textarea>
-      <button
-        mat-raised-button
-        color="primary"
-        class="mr-5 mb-3"
-        (click)="handleAddComment()"
+              <!-- BookMark -->
+              <div class="bookmark">
+                <mat-icon
+                  (click)="handleAddBookMark()"
+                  class="icon_color icon_bookmark"
+                  >bookmark</mat-icon
+                >
+              </div>
+
+              <img
+                src="../../assets/images/cancel_toggle.png"
+                class="cancel_toggle"
+                (click)="handleToogle()"
+              />
+              <mat-icon
+                *ngIf="videoStatus.isNotFullScreen"
+                (click)="handleVideoClick({ type: 'fullScreen' })"
+                class="fullscreen_icon"
+                >fullscreen</mat-icon
+              >
+              <mat-icon
+                *ngIf="!videoStatus.isNotFullScreen"
+                (click)="handleVideoClick({ type: 'fullScreen' })"
+                class="fullscreen_icon"
+                >fullscreen_exit</mat-icon
+              >
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-4 col-lg-4 col-sm-12 col-md-12 mt-5"
+        [hidden]="!videoStatus.isNotFullScreen"
       >
-        Add Comment
-      </button>
-      <ul
-        class="list-group"
-        *ngFor="let item of commentTimeStampObj | keyvalue"
-      >
-        <li
-          class="list-group-item"
-          [ngClass]="{
-            highlighed_list:
-              convertIntoSeconds(currentVideoDuration) -
-                convertIntoSeconds(item.key) <=
-                5 &&
-              convertIntoSeconds(currentVideoDuration) -
-                convertIntoSeconds(item.key) >=
-                0
-          }"
+        <ul
+          class="list-group"
+          *ngFor="let item of commentTimeStampObj | keyvalue"
         >
-          <p (click)="handleRedirectVideo(item.key)">{{ item.key }}</p>
-          &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;&nbsp;{{ item.value }}
-        </li>
-      </ul>
+          <li
+            class="list-group-item"
+            [ngClass]="{
+              highlighed_list:
+                convertIntoSeconds(currentVideoDuration) -
+                  convertIntoSeconds(item.key) <=
+                  5 &&
+                convertIntoSeconds(currentVideoDuration) -
+                  convertIntoSeconds(item.key) >=
+                  0
+            }"
+          >
+            <p (click)="handleRedirectVideo(item.key)">{{ item.key }}</p>
+            &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;&nbsp;{{ item.value }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
-
-<!-- <div [hidden]="videoStatus.isNotFullScreen">
-  <canvas
-    #canvasRef
-    (mousedown)="handleStartPaint($event)"
-    (mouseup)="handleStopPaint()"
-    (mousemove)="handleStartPaint($event)"
-    class="mt-5"
-  ></canvas>
-</div> -->

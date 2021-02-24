@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { Observable } from "rxjs";
+import Swal from "sweetalert2";
+import { faHighlighter } from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: "app-atrament-video-editor",
@@ -9,6 +11,35 @@ import { Observable } from "rxjs";
 export class AtramentVideoEditorComponent implements OnInit {
   @ViewChild("videoRef", { static: true }) video: ElementRef;
   @ViewChild("canvasRef", { static: true }) canvas: ElementRef;
+  @ViewChild("mainContainer", { static: true }) mainContainer: ElementRef;
+
+  highlighterIcon = faHighlighter;
+
+  drawingSizeOptions = [
+    {
+      strokeLength: 5,
+    },
+    {
+      strokeLength: 10,
+    },
+    {
+      strokeLength: 15,
+    },
+    {
+      strokeLength: 20,
+    },
+  ];
+
+  drawingSizeOptionDefault = [
+    {
+      strokeLength: 10,
+    },
+  ];
+
+  drawingDetails = {
+    strokeLength: 5,
+    strokeColor: "black",
+  };
 
   commentTimeStampObj = {};
 
@@ -25,15 +56,6 @@ export class AtramentVideoEditorComponent implements OnInit {
   canvasHighlightDrawing = {};
 
   currentDrawingTool: string = "";
-
-  videoStatus = {
-    playStatus: "pause",
-    volume: 0.7,
-    currentTime: 0,
-    totalTime: 0,
-    isNotFullScreen: true,
-    isEnded: false,
-  };
 
   isPainting: boolean = false;
 
@@ -61,14 +83,28 @@ export class AtramentVideoEditorComponent implements OnInit {
     previousY: null,
   };
 
-  drawingDetails = {
-    strokeLength: 5,
-    strokeColor: "black",
+  videoStatus = {
+    playStatus: "pause",
+    volume: 0.7,
+    currentTime: 0,
+    totalTime: 0,
+    isNotFullScreen: true,
+    isEnded: false,
   };
 
   timer;
 
+  count = 1;
+
   highLighterTimer;
+
+  volumeSliderInfo = {
+    isShown: false,
+  };
+
+  editOptionInfo = {
+    isShown: false,
+  };
 
   constructor() {}
 
@@ -163,8 +199,6 @@ export class AtramentVideoEditorComponent implements OnInit {
       }
     });
   };
-
-  count = 1;
 
   handleCheckCircleOverlap() {
     if (this.count === 1) {
@@ -316,13 +350,15 @@ export class AtramentVideoEditorComponent implements OnInit {
       "stroke-color": this.drawingDetails["strokeColor"] || "black",
     };
     precentageAxisObj["x-axis"] =
-      (xAxis / this.canvas.nativeElement.width) * 100;
+      (xAxis / this.canvas.nativeElement.clientWidth) * 100;
     precentageAxisObj["y-axis"] =
-      (yAxis / this.canvas.nativeElement.height) * 100;
+      (yAxis / this.canvas.nativeElement.clientHeight) * 100;
     return precentageAxisObj;
   };
 
   handleStopPaint() {
+    // console.log(this.canvasHighlightDrawing);
+    console.log(this.canvasDrawing);
     this.isPainting = false;
     this.canvasCtx.beginPath();
     if (this.currentDrawingTool === "annotate") {
@@ -344,7 +380,6 @@ export class AtramentVideoEditorComponent implements OnInit {
           delete this.canvasHighlightDrawing[key];
         }
       }
-      console.log(this.canvasHighlightDrawing);
     }
   }
 
@@ -393,6 +428,7 @@ export class AtramentVideoEditorComponent implements OnInit {
       );
       this.canvasCtx.beginPath();
       this.canvasCtx.arc(xAxis, yAxis, 5, 0, 2 * Math.PI);
+      this.canvasCtx.lineWidth = obj["stroke-length"];
       this.canvasCtx.fillStyle = obj["stroke-color"];
       this.canvasCtx.strokeStyle = obj["stroke-color"];
       this.canvasCtx.fill();
@@ -437,13 +473,11 @@ export class AtramentVideoEditorComponent implements OnInit {
       }
     } else if (type === "fullScreen") {
       this.videoStatus.isNotFullScreen = !this.videoStatus.isNotFullScreen;
-      // this.canvas.nativeElement.width = window.innerWidth;
-      // this.canvas.nativeElement.height = window.innerHeight;
     }
   }
 
-  handleButtonToggle(e) {
-    this.currentDrawingTool = e.value;
+  handleButtonToggle(value) {
+    this.currentDrawingTool = value;
   }
 
   fancySecondtoMinute(minute) {
@@ -499,5 +533,45 @@ export class AtramentVideoEditorComponent implements OnInit {
   handleRedirectVideo(key) {
     let timeInSeconds = this.convertIntoSeconds(key);
     this.video.nativeElement.currentTime = timeInSeconds;
+  }
+
+  handleVolumeOver() {
+    this.volumeSliderInfo.isShown = true;
+  }
+
+  handleCanvasMouseOver() {
+    this.volumeSliderInfo.isShown = false;
+  }
+
+  handleToogle() {
+    this.editOptionInfo.isShown = !this.editOptionInfo.isShown;
+  }
+
+  handleAddBookMark() {
+    Swal({
+      title: "Bookmark",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Add",
+    }).then(({ value }) => {
+      if (value === "") {
+        Swal({
+          type: "error",
+          title: ``,
+          text: `Comment cannot be empty`,
+        });
+        return false;
+      }
+      if (value && value.length > 0) {
+        this.commentText = value;
+        this.handleAddComment();
+      }
+    });
+  }
+  handleChangeStorkeLength(strokeLength) {
+    this.drawingDetails.strokeLength = strokeLength;
   }
 }

@@ -23,7 +23,8 @@ import { ScreenRecorderComponent } from "./screen-recorder/screen-recorder.compo
 import { AudioTranscriptComponent } from "./audio-transcript/audio-transcript.component";
 import { AtramentVideoEditorComponent } from "./atrament-video-editor/atrament-video-editor.component";
 import { LocalVideoEditorComponent } from "./local-video-editor/local-video-editor.component";
-
+import { VolumeControlDirective } from "./atrament-video-editor/directives/volume-control.directive";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,6 +32,7 @@ import { LocalVideoEditorComponent } from "./local-video-editor/local-video-edit
     AudioTranscriptComponent,
     AtramentVideoEditorComponent,
     LocalVideoEditorComponent,
+    VolumeControlDirective,
   ],
   imports: [
     AppRoutingModule,
@@ -42,6 +44,7 @@ import { LocalVideoEditorComponent } from "./local-video-editor/local-video-edit
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    FontAwesomeModule,
   ],
   providers: [
     AuthUserService,
