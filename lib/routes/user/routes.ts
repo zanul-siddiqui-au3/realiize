@@ -13,8 +13,10 @@ import { User } from "../../db";
 // Helpers
 import {
   audioFromVideo,
+  fetchSubtitleGcp,
   getJwtPayload,
   getTransciptFromVideo,
+  getTransciptFromVideoWithSubtitle,
   uploadToGcpCloud,
 } from "./helpers";
 import { AwsHelpers } from "../aws/helpers";
@@ -170,9 +172,64 @@ export class UserRoutes {
       });
       const fileDetails = await uploadToGcpCloud(audioFileName);
       const uploadAudioLink = `gs://${fileDetails[0]["metadata"]["bucket"]}/${fileDetails[0]["metadata"]["name"]}`;
-      const data = await getTransciptFromVideo(uploadAudioLink, audioFileName);
-      console.log(data);
+      const data = await getTransciptFromVideoWithSubtitle(
+        uploadAudioLink,
+        audioFileName
+      );
+
       res.json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async getSubtitle(req, res, next) {
+    try {
+      const videoSubtitle = ` 1
+      00:00:00 --> 00:00:04.000
+       If
+  
+      2
+      00:00:04.000 --> 00:00:08.000
+      you want something you've never had before you must do
+  
+      3
+      00:00:08.000 --> 00:00:14.000
+      something you've never done before it's taken me years tragedy
+  
+      4
+      00:00:14.000 --> 00:00:18.000
+      of losing myself inside only to realize what I must
+  
+      5
+      00:00:18.000 --> 00:00:23.000
+      have always known that you can be anything you dream.
+  
+      6
+      00:00:24.000 --> 00:00:32.000
+      dream dream until your dreams come true on your passion.
+  
+      7
+      00:00:32.000 --> 00:00:35.000
+      And when your shot comes take it look fear in
+  
+      8
+      00:00:35.000 --> 00:00:39.000
+      the face and embrace it the time is now the
+  
+      9
+      00:00:39.000 --> 00:00:44.000
+      moment is now fully believe in yourself. Like I believe
+  
+      10
+      00:00:44.000 --> 00:00:49.000
+      this to be true the world needs more of you.`;
+      const { requestedLang } = req.query;
+      const requestedSubtitle = await fetchSubtitleGcp(
+        videoSubtitle,
+        requestedLang
+      );
+      res.json(requestedSubtitle);
     } catch (error) {
       next(error);
     }

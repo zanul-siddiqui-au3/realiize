@@ -1,0 +1,43 @@
+<div class="container mt-5 w-50 float-left">
+  <mat-tab-group>
+    <mat-tab label="English">
+      <p>{{ videoSubtitle.english }}</p>
+    </mat-tab>
+    <mat-tab label="Spanish">
+      <ng-template [ngIf]="!videoSubtitle.spanish && !requestStatus.isLoading">
+        <button
+          mat-raised-button
+          class="mt-5"
+          color="primary"
+          (click)="getSubtitle('es')"
+        >
+          Get Transcript
+        </button>
+      </ng-template>
+      <ng-template [ngIf]="videoSubtitle.spanish && !requestStatus.isLoading">
+        <p>{{ videoSubtitle.spanish }}</p>
+      </ng-template>
+      <ng-template [ngIf]="requestStatus.isLoading">
+        <mat-spinner></mat-spinner>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Hindi">
+      <ng-template [ngIf]="!videoSubtitle.hindi && !requestStatus.isLoading">
+        <button
+          mat-raised-button
+          class="mt-5"
+          color="primary"
+          (click)="getSubtitle('hi')"
+        >
+          Get Transcript
+        </button>
+      </ng-template>
+      <ng-template [ngIf]="videoSubtitle.hindi && !requestStatus.isLoading">
+        <p>{{ videoSubtitle.hindi }}</p>
+      </ng-template>
+      <ng-template [ngIf]="requestStatus.isLoading">
+        <mat-spinner></mat-spinner>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

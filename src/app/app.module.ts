@@ -25,6 +25,7 @@ import { AtramentVideoEditorComponent } from "./atrament-video-editor/atrament-v
 import { LocalVideoEditorComponent } from "./local-video-editor/local-video-editor.component";
 import { VolumeControlDirective } from "./atrament-video-editor/directives/volume-control.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { VideoTranscriptDialogComponent } from './video-transcript-dialog/video-transcript-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,6 +34,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     AtramentVideoEditorComponent,
     LocalVideoEditorComponent,
     VolumeControlDirective,
+    VideoTranscriptDialogComponent,
   ],
   imports: [
     AppRoutingModule,

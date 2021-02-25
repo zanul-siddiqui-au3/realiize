@@ -1,7 +1,7 @@
 import { throwError as observableThrowError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 @Injectable()
 export class UserService {
   BASE_URL = `/api/user`;
@@ -58,6 +58,17 @@ export class UserService {
   getTranscript = ({ fileData, fileName }) => {
     const PATH = `${this.BASE_URL}/getTranscript`;
     return this.http.post(PATH, { fileData, fileName }).pipe(
+      map((res: any) => res),
+      catchError((error: any) =>
+        observableThrowError(error.error || "Server error")
+      )
+    );
+  };
+
+  getSubtitles = (requestedLang) => {
+    const PATH = `${this.BASE_URL}/getSubtitle`;
+    const params = new HttpParams().set("requestedLang", requestedLang);
+    return this.http.get(PATH, { params }).pipe(
       map((res: any) => res),
       catchError((error: any) =>
         observableThrowError(error.error || "Server error")

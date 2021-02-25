@@ -12,5 +12,6 @@ export class UserRouter {
     this.router.put("/:id/unsubscribe", UserRoutes.unsubscribe);
     this.router.post("/changePassword", UserRoutes.changePassword);
     this.router.post("/getTranscript", UserRoutes.getTransScript);
+    this.router.get("/getSubtitle", UserRoutes.getSubtitle);
   }
 }
