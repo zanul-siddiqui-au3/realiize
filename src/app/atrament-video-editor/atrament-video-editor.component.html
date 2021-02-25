@@ -38,6 +38,12 @@
             }"
           ></canvas>
         </div>
+        <div
+          class="closed_captions position-absolute"
+          *ngIf="videoDetails.captions && !videoDetails.captionClosed"
+        >
+          <span class="closed_Caption_span">{{ videoDetails.captions }} </span>
+        </div>
         <div class="video_slider position-absolute w-100">
           <input
             min="0"
@@ -93,11 +99,19 @@
                 class="icon_expand_toogle"
               />
               <mat-icon
+                class="icon_closed_caption mr-3"
+                (click)="
+                  videoDetails.captionClosed = !videoDetails.captionClosed
+                "
+                >closed_caption</mat-icon
+              >
+              <mat-icon
                 *ngIf="videoStatus.isNotFullScreen"
                 (click)="handleVideoClick({ type: 'fullScreen' })"
                 class="fullscreen_icon"
                 >fullscreen</mat-icon
               >
+
               <mat-icon
                 *ngIf="!videoStatus.isNotFullScreen"
                 (click)="handleVideoClick({ type: 'fullScreen' })"
@@ -184,6 +198,13 @@
                 class="cancel_toggle"
                 (click)="handleToogle()"
               />
+              <mat-icon
+                class="icon_closed_caption mr-4"
+                (click)="
+                  videoDetails.captionClosed = !videoDetails.captionClosed
+                "
+                >closed_caption</mat-icon
+              >
               <mat-icon
                 *ngIf="videoStatus.isNotFullScreen"
                 (click)="handleVideoClick({ type: 'fullScreen' })"

@@ -6,5 +6,6 @@ export class AwsRouter {
   constructor() {
     this.router = express.Router();
     this.router.get("/get-aws-url", AwsRoutes.getPreSignedUrl);
+    this.router.get("/read-aws-url", AwsRoutes.getVideoSignedUrl);
   }
 }

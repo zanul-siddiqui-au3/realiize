@@ -19,13 +19,13 @@ export const getJwtPayload = (user) => {
   };
 };
 
-export const audioFromVideo = ({ fileData, fileName }) => {
+export const audioFromVideo = ({ keyUrl, fileName }) => {
   return new Promise((resolve, reject) => {
     const audioFileName = `${moment().format(
       "MM-DD-YYYY__HH-mm-ss"
     )}_${fileName}.mp3`;
     const outStream = fs.createWriteStream(audioFileName);
-    ffmpegCommand(fileData)
+    ffmpegCommand(keyUrl)
       .toFormat("mp3")
       .on("end", (stdout, stderr) => {
         console.log("Completed");

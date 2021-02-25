@@ -17,6 +17,7 @@ import {
   getTransciptFromVideo,
   uploadToGcpCloud,
 } from "./helpers";
+import { AwsHelpers } from "../aws/helpers";
 
 export class UserRoutes {
   static JWT_SECRET = process.env.JWT_SECRET || "i am a tea pot";
@@ -162,13 +163,15 @@ export class UserRoutes {
   public static async getTransScript(req, res, next) {
     try {
       const { fileData, fileName } = req.body;
+      const keyUrl = await AwsHelpers.getVideoSignedUrl(fileData);
       const audioFileName = await audioFromVideo({
-        fileData,
+        keyUrl,
         fileName,
       });
       const fileDetails = await uploadToGcpCloud(audioFileName);
       const uploadAudioLink = `gs://${fileDetails[0]["metadata"]["bucket"]}/${fileDetails[0]["metadata"]["name"]}`;
       const data = await getTransciptFromVideo(uploadAudioLink, audioFileName);
+      console.log(data);
       res.json(data);
     } catch (error) {
       next(error);

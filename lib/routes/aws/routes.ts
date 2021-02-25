@@ -13,4 +13,13 @@ export class AwsRoutes {
       next(error);
     }
   }
+  public static async getVideoSignedUrl(req, res, next) {
+    try {
+      const { fileName } = req.query;
+      const url = await AwsHelpers.getVideoSignedUrl(fileName);
+      res.json({ url });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

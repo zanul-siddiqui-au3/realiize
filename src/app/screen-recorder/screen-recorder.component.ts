@@ -262,11 +262,11 @@ export class ScreenRecorderComponent
           .uploadfileAWSS3(url, "video/x-matroska", this.videoData.videoFile)
           .subscribe(
             (data) => {
-              if (data["url"]) {
+              if (data["type"] === 4) {
                 this.videoData.awsUrl = `https://${environment.S3_BUCKET_NAME}.s3.${environment.S3_Region}.amazonaws.com/${keyFile}`;
                 this.userService
                   .getTranscript({
-                    fileData: this.videoData.awsUrl,
+                    fileData: keyFile,
                     fileName: this.videoData.videoName,
                   })
                   .subscribe(
