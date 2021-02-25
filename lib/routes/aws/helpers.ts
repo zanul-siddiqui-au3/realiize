@@ -23,4 +23,18 @@ export class AwsHelpers {
     });
     return { url, keyFile };
   };
+
+  public static getVideoSignedUrl = async (fileName) => {
+    try {
+      const s3 = new AWS.S3();
+      const myBucket = config.S3_BUCKET_NAME;
+      const url = await s3.getSignedUrlPromise("getObject", {
+        Bucket: myBucket,
+        Key: fileName,
+      });
+      return url;
+    } catch (error) {
+      throw error;
+    }
+  };
 }

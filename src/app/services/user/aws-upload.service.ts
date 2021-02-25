@@ -38,4 +38,15 @@ export class AwsUploadService {
     });
     return this.http.request(req);
   }
+
+  readSignedUrlS3(fileName) {
+    const PATH = `${this.BASE_URL}/read-aws-url`;
+    let params = new HttpParams().set("fileName", fileName);
+    return this.http.get(PATH, { params }).pipe(
+      map((res: any) => res),
+      catchError((error: any) =>
+        observableThrowError(error.error || "Server error")
+      )
+    );
+  }
 }

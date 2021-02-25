@@ -47,7 +47,7 @@ export class AudioTranscriptComponent implements OnInit {
                 this.awsUrl = `https://${environment.S3_BUCKET_NAME}.s3.${environment.S3_Region}.amazonaws.com/${keyFile}`;
                 this.userService
                   .getTranscript({
-                    fileData: this.awsUrl,
+                    fileData: keyFile,
                     fileName: this.fileName,
                   })
                   .subscribe(
